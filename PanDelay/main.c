@@ -3,8 +3,12 @@
 #include "PanDelay.h"
 #include "ff.h"
 
-int main()
+int main(int argc, char** argv)
 {
+    if (argc != 2) {
+        printf("usage: PanDelay [wav file]\n");
+        return 1;
+    }
     int err;
     float* buf = NULL;
     int linesize;
@@ -18,7 +22,7 @@ int main()
     if (!context) {
         EXIT_ON_ERROR(AVERROR(ENOMEM));
     }
-    err = avformat_open_input(&context, "C:\\Users\\Administrator\\Music\\System Of Love.wav", NULL, NULL);
+    err = avformat_open_input(&context, argv[1], NULL, NULL);
     EXIT_ON_ERROR(err);
     avformat_find_stream_info(context, NULL);
     printf("filename: %s\n", context->url);
@@ -50,10 +54,12 @@ int main()
     AVPacket* pack = av_packet_alloc();
     AVFrame* frame = av_frame_alloc();
     int read_eof = 0;
+    int read_n = 0;
     while (read_eof != 1) {
         err = av_read_frame(context, pack);
         if (pack->stream_index != stream_index) {
             av_packet_unref(pack);
+            if (err == AVERROR_EOF) read_eof = 1;
             continue;
         }
         if (err == AVERROR_EOF) {
@@ -64,6 +70,8 @@ int main()
         }
         read_eof = read_frame(avctx, frame, NULL);
         av_packet_unref(pack);
+        read_n++;
+        printf("read frame: %d\r", read_n);
     }
     av_frame_free(frame);
     av_packet_unref(pack);

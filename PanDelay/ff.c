@@ -9,8 +9,7 @@ int read_frame(AVCodecContext* avctx, AVFrame* frame, float* buf) {
             return 1;
         }
         else if (err >= 0) {
-            int data_size = av_get_bytes_per_sample(avctx->sample_fmt);
-
+            // printf("nb_samples: %d\n", frame->nb_samples);
         }
         else {
             EXIT_ON_ERROR(err);
