@@ -1,6 +1,7 @@
 #include "ff.h"
+#include "PanDelay.h"
 
-int read_frame(AVCodecContext* avctx, AVFrame* frame, float* buf) {
+int read_frame(AVCodecContext* avctx, SwrContext* swctx, AVFrame* frame, float* buf) {
     int err;
     while (1) {
         err = avcodec_receive_frame(avctx, frame);

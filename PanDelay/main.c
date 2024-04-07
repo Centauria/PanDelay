@@ -50,6 +50,11 @@ int main(int argc, char** argv)
         printf("num_channels is not 2, abort.");
         EXIT_ON_ERROR(-1);
     }
+    SwrContext* swctx = NULL;
+    swr_alloc_set_opts2(&swctx, &avctx->ch_layout, AV_SAMPLE_FMT_FLT, avctx->sample_rate,
+        &avctx->ch_layout, avctx->sample_fmt, avctx->sample_rate,
+        0, NULL);
+    swr_init(swctx);
 
     AVPacket* pack = av_packet_alloc();
     AVFrame* frame = av_frame_alloc();
@@ -68,14 +73,16 @@ int main(int argc, char** argv)
         else if (err == 0) {
             while (avcodec_send_packet(avctx, pack) == AVERROR(EAGAIN));
         }
-        read_eof = read_frame(avctx, frame, NULL);
+        read_eof = read_frame(avctx, swctx, frame, NULL);
         av_packet_unref(pack);
         read_n++;
         printf("read frame: %d\r", read_n);
     }
-    av_frame_free(frame);
+    printf("\nDone!\n");
+    av_frame_free(&frame);
     av_packet_unref(pack);
     av_packet_free(&pack);
+    swr_free(&swctx);
     avcodec_free_context(&avctx);
     avformat_close_input(&context);
     // av_audio_fifo_free(buf);
