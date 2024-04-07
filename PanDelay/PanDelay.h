@@ -15,6 +15,6 @@ typedef struct linebuf {
 void linebuf_free(LineBuf* buf);
 LineBuf* linebuf_alloc(size_t size);
 float linebuf_read(LineBuf* buf, int offset);
-void linebuf_write(LineBuf* buf, size_t offset);
+void linebuf_write(LineBuf* buf, float val);
 
 size_t m_add(size_t src, int offset, size_t size);

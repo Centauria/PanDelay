@@ -29,6 +29,13 @@ float linebuf_read(LineBuf* buf, int offset)
     return 0.0f;
 }
 
+void linebuf_write(LineBuf* buf, float val)
+{
+    buf->data[buf->w] = val;
+    (buf->w)++;
+    if (buf->w == buf->size) buf->w = 0;
+}
+
 size_t m_add(size_t src, int offset, size_t size)
 {
     int64_t v = (int64_t)src + offset;
