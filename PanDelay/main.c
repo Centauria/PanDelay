@@ -30,17 +30,17 @@ int main(int argc, char** argv)
     printf("iformat name: %s\n", context->iformat->name);
 
     printf("Detecting audio stream...\n");
-    int stream_index = -1;
+    int audio_stream_index = -1;
     for (int i = 0; i < context->nb_streams; i++) {
         if (context->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-            stream_index = i;
+            audio_stream_index = i;
             break;
         }
     }
-    printf("stream index: %d\n", stream_index);
+    printf("stream index: %d\n", audio_stream_index);
 
     AVCodecContext* avctx = avcodec_alloc_context3(NULL);
-    err = avcodec_parameters_to_context(avctx, context->streams[stream_index]->codecpar);
+    err = avcodec_parameters_to_context(avctx, context->streams[audio_stream_index]->codecpar);
     EXIT_ON_ERROR(err);
     AVCodec* codec = avcodec_find_decoder(avctx->codec_id);
     err = avcodec_open2(avctx, codec, NULL);
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     int read_n = 0;
     while (read_eof != 1) {
         err = av_read_frame(context, pack);
-        if (pack->stream_index != stream_index) {
+        if (pack->stream_index != audio_stream_index) {
             av_packet_unref(pack);
             if (err == AVERROR_EOF) read_eof = 1;
             continue;
