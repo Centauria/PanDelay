@@ -35,10 +35,3 @@ void linebuf_write(LineBuf* buf, float val)
     (buf->w)++;
     if (buf->w == buf->size) buf->w = 0;
 }
-
-size_t m_add(size_t src, int offset, size_t size)
-{
-    int64_t v = (int64_t)src + offset;
-    while (v < 0) v += size;
-    return (size_t)v % size;
-}
